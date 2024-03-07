@@ -11,5 +11,6 @@ RUN ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     mkdir /app
 COPY upscayl/ /app/upscayl
+RUN chmod -x /app/upscayl/linux/upscayl-bin
 COPY --from=build /home/gradle/upscayl-runner/build/libs/*.jar /app/upscayl-runner-all.jar
 ENTRYPOINT ["java","-jar","/app/upscayl-runner-all.jar"]
