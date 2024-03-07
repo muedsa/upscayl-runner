@@ -1,5 +1,6 @@
 package com.muedsa.upscayl.listener
 
+import com.muedsa.upscayl.model.ImageUrlAlias
 import com.muedsa.upscayl.model.NetworkImageUpscaylParams
 import com.muedsa.upscayl.model.ProvideUpscaylImage
 import com.muedsa.upscayl.service.*
@@ -28,6 +29,12 @@ class NetImageUpscaylListener(
             var targetFile: File? = null
             try {
                 sourceFile = imageDownloadService.downloadImage(url)
+                val sourceHash = sourceFile.sha256()
+                val existUpscaylImageResp = upscaylImageProviderService.updateImageHash(data = ImageUrlAlias(url, sourceHash))
+                if (existUpscaylImageResp.hasImage) {
+                    logger.info("NetImageUpscaylListener: Upscayl image already exists, ${existUpscaylImageResp.upscaylUrl}")
+                    return
+                }
                 targetFile = imageDownloadService.getAvailableFile(".$format")
                 val result = upscaylService.upscayl(
                     sourceFile.path, targetFile.path, scale, model, format
@@ -39,7 +46,7 @@ class NetImageUpscaylListener(
                         val provideUpscaylImage = ProvideUpscaylImage(
                             traceId = guid,
                             sourceUrl = url,
-                            sourceHash = sourceFile.sha256(),
+                            sourceHash = sourceHash,
                             upscaylUrl = resp.files[0],
                             taskResult = result
                         )

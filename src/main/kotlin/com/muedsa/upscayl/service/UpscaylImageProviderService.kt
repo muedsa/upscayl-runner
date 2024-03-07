@@ -1,7 +1,10 @@
 package com.muedsa.upscayl.service
 
+import com.muedsa.upscayl.model.ExistUpscaylImageResp
+import com.muedsa.upscayl.model.ImageUrlAlias
 import com.muedsa.upscayl.model.ProvideUpscaylImage
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -16,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 class UpscaylImageProviderService(
     private val config: ApplicationConfig
 ) {
-    private val providerUrl: String = config.property("ktor.image.provider.url").getString()
+    private val providerHost: String = config.property("ktor.image.provider.host").getString()
     private val providerToken: String = config.property("ktor.image.provider.token").getString()
 
     private val client = HttpClient(CIO) {
@@ -29,9 +32,20 @@ class UpscaylImageProviderService(
         }
     }
 
+    fun updateImageHash(data: ImageUrlAlias, traceId: String = ""): ExistUpscaylImageResp {
+        return runBlocking {
+            client.post(urlString = "$providerHost/updateImageHash") {
+                contentType(ContentType.Application.Json)
+                setBody(data)
+                header(HttpHeaders.Authorization, providerToken)
+                header("X-Request-ID", traceId)
+            }.body<ExistUpscaylImageResp>()
+        }
+    }
+
     fun provide(data: ProvideUpscaylImage) {
         runBlocking {
-            client.post(urlString = providerUrl) {
+            client.post(urlString = "$providerHost/provide") {
                 contentType(ContentType.Application.Json)
                 setBody(data)
                 header(HttpHeaders.Authorization, providerToken)
