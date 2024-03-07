@@ -2,8 +2,6 @@ FROM gradle:8.6.0-jdk11 AS build
 COPY --chown=gradle:gradle . /home/gradle/snapshot-web
 WORKDIR /home/gradle
 RUN git clone https://github.com/muedsa/upscayl-runner && \
-    cd snapshot && \
-    gradle jar --no-daemon && \
     cd upscayl-runner && \
     gradle buildFatJar --no-daemon
 
