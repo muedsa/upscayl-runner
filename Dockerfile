@@ -1,5 +1,5 @@
 FROM gradle:8.6.0-jdk11 AS build
-COPY --chown=gradle:gradle . /home/gradle/snapshot-web
+COPY --chown=gradle:gradle . /home/gradle/upscayl-runner
 WORKDIR /home/gradle
 RUN git clone https://github.com/muedsa/upscayl-runner && \
     cd upscayl-runner && \
