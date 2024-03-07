@@ -11,6 +11,20 @@ class UpscaylService {
 
     private val logger = LoggerFactory.getLogger(UpscaylService::class.java)
 
+    private val processPath: String = when(OSUtil.OS) {
+        OSType.WINDOWS -> "upscayl/win/upscayl-bin.exe"
+        OSType.LINUX -> "upscayl/linux/upscayl-bin"
+        OSType.MACOS -> throw IllegalStateException("not support for macos")
+    }
+
+    init {
+        // check upscayl
+        System.getProperty("user.dir").also {
+            logger.info("current work dir: $it")
+        }
+        ProcessBuilder(processPath, "-v").start().waitFor()
+    }
+
     fun upscayl(
         source: String,
         target: String,
@@ -18,11 +32,7 @@ class UpscaylService {
         model: String = "realesrgan-x4plus",
         format: String = "png"
     ): UpscaylTaskResult {
-        val processPath: String = when(OSUtil.OS) {
-            OSType.WINDOWS -> "./upscayl/win/upscayl-bin.exe"
-            OSType.LINUX -> "./upscayl/linux/upscayl-bin"
-            OSType.MACOS -> throw IllegalStateException("not support for macos")
-        }
+
 
         val processBuilder = ProcessBuilder(
             processPath,
