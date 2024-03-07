@@ -30,7 +30,10 @@ class NetImageUpscaylListener(
             try {
                 sourceFile = imageDownloadService.downloadImage(url)
                 val sourceHash = sourceFile.sha256()
-                val existUpscaylImageResp = upscaylImageProviderService.updateImageHash(data = ImageUrlAlias(url, sourceHash))
+                val existUpscaylImageResp = upscaylImageProviderService.updateImageHash(
+                    data = ImageUrlAlias(url, sourceHash),
+                    traceId = guid
+                )
                 if (existUpscaylImageResp.hasImage) {
                     logger.info("NetImageUpscaylListener: Upscayl image already exists, ${existUpscaylImageResp.upscaylUrl}")
                     return
