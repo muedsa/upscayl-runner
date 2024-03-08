@@ -31,7 +31,9 @@ class UpscaylService(
         val processBuilder = ProcessBuilder(processPath, "-v")
             .redirectErrorStream(true)
         if (libsDirPath.isNotBlank()) {
-            processBuilder.environment()["LD_LIBRARY_PATH"] = "$libsDirPath:${processBuilder.environment()["LD_LIBRARY_PATH"]}"
+            processBuilder.environment().also {
+                it["LD_LIBRARY_PATH"] = "$libsDirPath:${it["LD_LIBRARY_PATH"]?:""}"
+            }
         }
         logger.info("upscayl process check")
         logger.info("current working directory: ${System.getProperty("user.dir")}")
