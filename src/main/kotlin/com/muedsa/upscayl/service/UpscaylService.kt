@@ -54,8 +54,6 @@ class UpscaylService(
         model: String = "realesrgan-x4plus",
         format: String = "png"
     ): UpscaylTaskResult {
-
-
         val processBuilder = ProcessBuilder(
             processPath,
             "-i", source,
@@ -66,8 +64,10 @@ class UpscaylService(
             "-n", model,
             "-v"
         ).redirectErrorStream(true)
-        processBuilder.environment().also {
-            it["LD_LIBRARY_PATH"] = "./upscayl/linux:${it["LD_LIBRARY_PATH"]?:""}"
+        if (libsDirPath.isNotBlank()) {
+            processBuilder.environment().also {
+                it["LD_LIBRARY_PATH"] = "$libsDirPath:${it["LD_LIBRARY_PATH"]?:""}"
+            }
         }
         logger.debug("upscayl command: ${processBuilder.command().joinToString(" ")}")
         val startTime = System.currentTimeMillis()
