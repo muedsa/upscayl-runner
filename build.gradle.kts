@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
 
+    implementation(libs.loki4j)
+    implementation(libs.http.client)
 }
 
 java {

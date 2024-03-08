@@ -8,6 +8,8 @@ prometheus = "1.10.3"
 logback = "1.4.14"
 koin-bom = "3.5.3"
 lettuce = "6.3.1.RELEASE"
+loki4j = "1.4.2"
+http-client = "4.5.14"
 
 [libraries]
 kotlin-test =  { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -29,6 +31,8 @@ ktor-client-core = { module = "io.ktor:ktor-client-core" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation" }
+loki4j = { module = "com.github.loki4j:loki-logback-appender", version.ref = "loki4j" }
+http-client = { module = "org.apache.httpcomponents:httpclient", version.ref = "http-client" }
 
 [plugins]
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

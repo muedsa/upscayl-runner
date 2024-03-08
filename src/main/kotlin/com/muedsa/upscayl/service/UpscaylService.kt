@@ -69,8 +69,8 @@ class UpscaylService(
                 it["LD_LIBRARY_PATH"] = "$libsDirPath:${it["LD_LIBRARY_PATH"]?:""}"
             }
         }
-        logger.debug("upscayl command: ${processBuilder.command().joinToString(" ")}")
         val startTime = System.currentTimeMillis()
+        logger.info("$startTime - upscayl command: ${processBuilder.command().joinToString(" ")}")
         val process = processBuilder.start()
         val resultReader = BufferedReader(InputStreamReader(process.inputStream))
         val resultText = resultReader.use {
@@ -81,8 +81,9 @@ class UpscaylService(
         if (exitCode != 0) {
             logger.error(resultText)
         } else{
-            logger.debug(resultText)
+            logger.info(resultText)
         }
+        logger.info("$endTime - upscayl end")
         return UpscaylTaskResult(exitCode, resultText, startTime, endTime)
     }
 }
