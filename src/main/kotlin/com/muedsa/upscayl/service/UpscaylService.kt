@@ -1,28 +1,48 @@
 package com.muedsa.upscayl.service
 
 import com.muedsa.upscayl.model.UpscaylTaskResult
-import com.muedsa.upscayl.util.OSType
-import com.muedsa.upscayl.util.OSUtil
+import io.ktor.server.config.*
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
-class UpscaylService {
+class UpscaylService(
+    private val config: ApplicationConfig
+) {
 
     private val logger = LoggerFactory.getLogger(UpscaylService::class.java)
 
-    private val processPath: String = when(OSUtil.OS) {
-        OSType.WINDOWS -> "upscayl/win/upscayl-bin.exe"
-        OSType.LINUX -> "upscayl/linux/upscayl-bin"
-        OSType.MACOS -> throw IllegalStateException("not support for macos")
-    }
+    private val processPath: String = config.property("ktor.upscayl.processPath").getString()
+
+    private val modelsDirPath: String = config.property("ktor.upscayl.modelsDirPath").getString()
+
+    private val libsDirPath: String = config.property("ktor.upscayl.libsDirPath").getString()
 
     init {
-        // check upscayl
-        System.getProperty("user.dir").also {
-            logger.info("current work dir: $it")
+        // check upscayl models directory
+        Path(modelsDirPath).also {
+            check(it.exists()) { "Upscayl models directory not found: $modelsDirPath" }
+            check(it.isDirectory()) { "Upscayl models directory is not a directory: $modelsDirPath" }
         }
-        ProcessBuilder(processPath, "-v").start().waitFor()
+        // check upscayl
+        val processBuilder = ProcessBuilder(processPath, "-v")
+            .redirectErrorStream(true)
+        if (libsDirPath.isNotBlank()) {
+            processBuilder.environment()["LD_LIBRARY_PATH"] = "$libsDirPath:${processBuilder.environment()["LD_LIBRARY_PATH"]}"
+        }
+        logger.info("upscayl process check")
+        logger.info("current working directory: ${System.getProperty("user.dir")}")
+        logger.info("upscayl command: ${processBuilder.command().joinToString(" ")}")
+        val process = processBuilder.start()
+        val resultReader = BufferedReader(InputStreamReader(process.inputStream))
+        val resultText = resultReader.use {
+            it.readText()
+        }
+        process.waitFor()
+        logger.info(resultText)
     }
 
     fun upscayl(
@@ -40,7 +60,7 @@ class UpscaylService {
             "-o", target,
             "-s", if(scale in 2..4) scale.toString() else "4",
             "-f", format,
-            "-m", "../models",
+            "-m", modelsDirPath,
             "-n", model,
             "-v"
         ).redirectErrorStream(true)
