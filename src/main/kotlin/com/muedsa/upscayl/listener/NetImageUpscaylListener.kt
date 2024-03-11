@@ -51,6 +51,8 @@ class NetImageUpscaylListener(
                             sourceUrl = url,
                             sourceHash = sourceHash,
                             upscaylUrl = resp.files[0],
+                            scale = scale,
+                            model = model,
                             taskResult = result
                         )
                         upscaylImageProviderService.provide(provideUpscaylImage)

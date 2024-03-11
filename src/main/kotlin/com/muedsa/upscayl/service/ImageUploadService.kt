@@ -13,7 +13,6 @@ import io.ktor.server.config.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.internal.decodeStringToJsonTree
 import java.io.File
 
 class ImageUploadService(
