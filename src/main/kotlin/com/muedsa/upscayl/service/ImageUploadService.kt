@@ -28,6 +28,7 @@ class ImageUploadService(
         defaultRequest {
             headers.appendIfNameAbsent(HttpHeaders.Authorization, uploadToken)
         }
+        expectSuccess = true
     }
 
     fun upload(file: File): ZiplineUploadResp {

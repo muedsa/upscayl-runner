@@ -30,6 +30,7 @@ class UpscaylImageProviderService(
         defaultRequest {
             headers.appendIfNameAbsent(HttpHeaders.Authorization, providerToken)
         }
+        expectSuccess = true
     }
 
     fun updateImageHash(data: ImageUrlAlias, traceId: String = ""): ExistUpscaylImageResp {
