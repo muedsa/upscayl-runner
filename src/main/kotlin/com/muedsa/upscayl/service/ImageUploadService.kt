@@ -21,7 +21,7 @@ class ImageUploadService(
 
     private val uploadUrl: String = config.property("ktor.image.upload.url").getString()
     private val uploadToken: String = config.property("ktor.image.upload.token").getString()
-
+    private val uploadFolder: String = config.property("ktor.image.upload.folder").getString()
 
     private val client = HttpClient(CIO) {
         install(Logging)
@@ -48,6 +48,7 @@ class ImageUploadService(
                         append("file", file.readBytes(), Headers.build {
                             append(HttpHeaders.ContentType, contentType)
                             append(HttpHeaders.ContentDisposition, "filename=\"${file.name}\"")
+                            append("x-zipline-folder", uploadFolder)
                         })
                     }
                 ))
