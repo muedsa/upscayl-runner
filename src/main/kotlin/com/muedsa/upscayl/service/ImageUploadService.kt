@@ -48,10 +48,10 @@ class ImageUploadService(
                         append("file", file.readBytes(), Headers.build {
                             append(HttpHeaders.ContentType, contentType)
                             append(HttpHeaders.ContentDisposition, "filename=\"${file.name}\"")
-                            append("x-zipline-folder", uploadFolder)
                         })
                     }
                 ))
+                header("x-zipline-folder", uploadFolder)
             }.bodyAsText()
             return@runBlocking Json.Default.decodeFromString<ZiplineUploadResp>(resp)
         }
